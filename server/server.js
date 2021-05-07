@@ -2,6 +2,7 @@ const path = require('path');
 const express = require('express');
 const app = express();
 const publicPath = path.join(__dirname, '..', 'public');
+const port = process.env.PORT || 3000;
 
 app.use(express.static(publicPath));
 
@@ -9,8 +10,8 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(publicPath, 'index.html'));
 });
 
-app.listen(3000, () => {
-    console.log('Server is up! on Port 3000');
+app.listen(port, () => {
+    console.log('Server is up! on a Static Port: 3000');
 });
 
 /**
@@ -51,4 +52,11 @@ app.listen(3000, () => {
  * 2. Tell it/Point it to use the "Public" Directory/Folder => To serve up all of our static assests
  * 3. Setup: If what is requested isn't in the "Public Folder" => Then just send/give them back our "index.html"
  * 4. Setup: Point our Express Server to startup on Port: 3000
+ */
+
+/**
+ * Heroku Setup/Edit
+ * 
+ * 1. Setup Dynamic Port from Heroku
+ * 2. 
  */

@@ -13,10 +13,10 @@ node_modules/
 
 # production
 /build
-bundle.js
-bundle.js.map
-styles.css
-styles.css.map
+public/bundle.js
+public/bundle.js.map
+public/styles.css
+public/styles.css.map
 
 # misc
 .DS_Store
