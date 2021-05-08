@@ -55,8 +55,43 @@ app.listen(port, () => {
  */
 
 /**
- * Heroku Setup/Edit
- * 
+ * Heroku Setup
  * 1. Setup Dynamic Port from Heroku
  * 2. 
+ */
+
+/**
+ * Regular Vs. Development Dependencies
+ * ISSUE: Dependencies like (enzyme, live-server, webpack-dev-server, etc...) are thing that are currently getting install on Heroku => Even though Heroku is NOT taking advantage of them
+ * SOLUTION: Create 2 Sections of "Dependencies"
+ *         - We can create "Dependecies" that are install "Locally" & get install on "Heroku"
+ *           But we can also create a separate "Dev Dependencies" section => Those Dependencies will only get install "Locally"
+ * 
+ * 1. Install 'chalk' via YARN, but adding on a '--dev' flag => To install it as a "Development Dependencies" => Ex. yarn add chalk --dev
+ *  - '--dev': flag will add a { devDependencies } section within our 'package.json' file
+ * 
+ * 2. Move: our (enzyme, enzyme-to-json, jest, react-test-renderer, webpack-dev-server) dependencies onto our { devDependencies } section
+ *  - Remove: (live-server) & its 'scripts: { "serve": "live-server public/" }' from our dependencies => Because it's something that we're not going to use anymore
+ * 
+ * QUESTION: How to we choose to install one or the other???
+ * ANSWER: By deleting our "node_modules" folder...
+ *       - We can run: yarn install --production => This tell YARN to only install the "Regular Dependencies" & to leave off the "Dev Dependencies" 
+ *         If we check our new "node_modules" folder => We will see that whatever was in our { devDependecies } section will NOT be included
+ * 
+ * 3. Locally we will use 'yarn install' => To install both our "Regular Dependencies" & "devDependencies" 
+ * 
+ * 4. Create a separate 'dist/' Directory/Folder => To have "webpack" dump all of our (bundle.js, bundle.js.map, styles.css, styles.css.map) "Generated Assets" files into our 'dist/' directory
+ *  - To manage this: We are going to make some one-line tweak/edit to our "webpack.config" => changing where the generated files gets outputted
+ *                    Making changes to "index.html"
+ *  - 1st: "index.html" - Change the source location of our 'bundle.js' => Ex. src="/dist/bundle.js"
+ *                      - Change the 'href' location of our 'styles.css' => Ex. href="/dist/styles.css"
+ *  - 2nd: "webpack.config.js" - The { output: { path: } } => Tells webpack where to dump all of our "Generataed Assest" files
+ *                             - Change the "output path" to => { output: { path: path.joing(__dirname, 'public', 'dist') } }
+ * 
+ *  - NOTE: Since we're changing where the "Generated Assets" file is outputted/end up...
+ *          We also need to make an tweak/edit to the { devServer: }
+ *        - Atm the { devServer: } is looking for the "Assets" file in the "root" of the "/public" folder
+ * 
+ *  - 3rd: "webpack.config.js" - { publicPath: } lets you specify where the "Generated Bundled Assets" should live
+ * 
  */
