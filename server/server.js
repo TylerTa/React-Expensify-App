@@ -94,4 +94,8 @@ app.listen(port, () => {
  * 
  *  - 3rd: "webpack.config.js" - { publicPath: } lets you specify where the "Generated Bundled Assets" should live
  * 
+ *  - NOTE: When running our 'yarn run dev-server' => { devServer: } never write to the "File Systems" => So we will NOT see the '/dist/' directory within our VSCode
+ *        - When running our 'yarn run build:prod' => We WILL see our "Bundled Assets" files get written onto the '/dist/' directory/folder
+ *        - Wrapping this up by running 'yarn run start' => To run our "node server/server.js" => to make sure that they acutally work as expected
+ * 
  */
