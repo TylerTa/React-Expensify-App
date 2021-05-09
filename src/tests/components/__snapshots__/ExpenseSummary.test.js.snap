@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Viewing 1 expense totalling $45.00 1`] = `
+<div>
+  <p>
+    Viewing 1 expense totalling $45.00
+  </p>
+</div>
+`;
+
+exports[`Viewing 2 expenses totalling $1,140.00 1`] = `
+<div>
+  <p>
+    Viewing 2 expenses totalling $1,140.00
+  </p>
+</div>
+`;
