@@ -65,3 +65,40 @@ test('should not edit an expense', () => {
     const state = expensesReducer(expenses, action);
     expect(state).toEqual(expenses);
 });
+
+test('should set expenses', () => {
+  const action = {
+    type: 'SET_EXPENSES', 
+    expenses: [expenses[1]]
+  };
+  const state = expensesReducer(expenses, action);
+  expect(state).toEqual([expenses[1]]);
+});
+
+
+// Ep.157: Challenge Original Code
+// test('should set expenses', () => {
+//   const initialExpenses = [
+//     {
+//       id: 1,
+//       description: 'food',
+//       amount: '500',
+//       note: '',
+//       createdAt: 1000
+//     }
+//   ]
+
+//   const initialState = {
+//     expenses: initialExpenses
+//   }
+
+//   const action = {
+//     type: 'SET_EXPENSES',
+//     expenses
+//   }
+  
+//   const state = expensesReducer(expenses, action);
+
+//   expect(initialState).not.toEqual(state);
+//   expect(state.expenses).toEqual(expenses);
+// });

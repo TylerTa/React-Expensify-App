@@ -7,7 +7,7 @@ import AppRouter from './routers/AppRouter';
 import configureStore from './store/configureStore';
 
 // Action Generator Imports
-import { addExpense } from './actions/expenses';
+import { startSetExpenses } from './actions/expenses';
 import { setTextFilter } from './actions/filters';
 
 // Selectors Imports
@@ -27,4 +27,13 @@ const jsx = (
     </Provider>
 );
 
-ReactDOM.render(jsx, document.getElementById('app'));
+// Render a "Loading Message" until => We get data from Firebase
+ReactDOM.render(<p>Loading...</p>, document.getElementById('app'));
+
+// Dispatch a fetch to our database => Which 'return' a "Promise"
+// - '.then(() => { }): On "Success" / .then(() => { }) => We render the application
+store.dispatch(startSetExpenses()).then(() => {
+  ReactDOM.render(jsx, document.getElementById('app'));
+});
+
+

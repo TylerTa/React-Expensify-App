@@ -1,10 +1,34 @@
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import { startAddExpense, addExpense, editExpense, removeExpense } from '../../actions/expenses';
+import { startAddExpense, addExpense, editExpense, removeExpense, setExpenses, startSetExpenses } from '../../actions/expenses';
 import expenses from '../fixtures/expenses';
 import database from '../../firebase/firebase';
 
 const createMockStore = configureMockStore([thunk]);
+
+/******************************************************************************************************************************************************/
+// Ep.157: Fetching Expenses/Data from Firebase
+// 1. Within our expenses.test.js: 
+//  - Step 1: Set up a '.beforeEach{}' => To grab our "Fixtures/Test" Expenses Data => & and parse it into a format to '.set()' it in our Database
+//  - NOTE: Our Asynchronous call to '.set()' our 'expensesData' might not "Wait" for our '.forEach(() => { })' callback function to finish...
+//          So we have to pass in 'done' and call it after our '.set()' database call. 
+//  
+// 2. Within actions/expenses.js: We are going to be adding 2 new exports
+//  - setExpense(): Our action that => Has our 'expenses[]' value from the database & will set/change our store/state
+//  - startSetExpense(): "Asynchronous Action" that will fetch that data from database => & dispatch 'setExpense()'
+//
+//  - Step 1: Create/Declare our 'setExpense()' Action Generator
+//  - Step 2: Within "expenses.test.js": We can go ahead and add a "Test Case" => Making sure we get the expected uniform "Action Object" structure back
+/******************************************************************************************************************************************************/
+
+beforeEach((done) => {
+  const expensesData = {};
+  expenses.forEach(({ id, description, note, amount, createdAt }) => {
+    expensesData[id] = { description, note, amount, createdAt };
+  });
+
+  database.ref('expenses').set(expensesData).then(() => done());
+});
 
 test('should setup remove expense action object', () => {
   const action = removeExpense({ id: '123abc' });
@@ -119,7 +143,7 @@ test('should add expense to database and store', (done) => {
   });
 });
 
-test('should add expense with defaults to database and store', () => {
+test('should add expense with defaults to database and store', (done) => {
   const store = createMockStore({});
   const expenseDefaultData = {
     description: '',
@@ -149,6 +173,32 @@ test('should add expense with defaults to database and store', () => {
   });
 });
 
+test('should setup set expense action object with data', () => {
+  const action = setExpenses(expenses);
+  expect(action).toEqual({
+    type: 'SET_EXPENSES',
+    expenses
+  });
+});
+
+// Asynchronous Test Cases
+test('should fetch the expense from firebase', (done) => {
+  // 1. Create our "Mock Store"
+  const store = createMockStore({})
+
+  // 2. Go through the process of making a "Request"
+  store.dispatch(startSetExpenses()).then(() => {
+    const actions = store.getActions();
+
+    // 3. Assert something about the action that were dispatch
+    expect(actions[0]).toEqual({
+      type: 'SET_EXPENSES',
+      expenses
+    });
+    // 4. Call 'done()' because this is an "Asynchronouse Test Case"
+    done();
+  });
+});
 
 /******************************************************************************************************************************************************/
 // Old Code: Before Firebase Connection (Setting up Defaults: comes from 'startAddExpense()')
