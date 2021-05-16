@@ -65,6 +65,22 @@ export const removeExpense = ({ id } = {}) => ({
   id
 });
 
+// 1. Create startRemoveExpense (same call signature as removeExpense)
+// 2. Test startRemoveExpense with "should remove expenses from firebase"
+//  - In order verify that the expense was "removed" from firebase => We can try to fetch it and call .val() on the "Snapshot" => 
+//    If there is no data there => It would have 'null' as the return value
+//  - So we can use an Assertion to check if it is 'null'
+// 3. Use startRemoveExpense in EditExpensePage instead of removeExpense
+// 4. Adjust EditExpensePage tests
+
+export const startRemoveExpense = ({ id } = {}) => {
+  return (dispatch) => {
+    return database.ref(`expenses/${id}`).remove().then(() => {
+      dispatch(removeExpense({ id }));
+    });
+  };
+};
+
 // EDIT_EXPENSE - Action Generator
 export const editExpense = (id, updates) => ({
   type: 'EDIT_EXPENSE',
