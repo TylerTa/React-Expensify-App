@@ -17,7 +17,41 @@ firebase.initializeApp(firebaseConfig);
 
 const database = firebase.database();
 
-export { firebase, database as default};
+const googleAuthProvider = new firebase.auth.GoogleAuthProvider();
+
+export { firebase, googleAuthProvider, database as default};
+
+/**********************************************************************************************************************************************************************************/
+// Ep.162: Login Page & Google Authentication - Firebase Google Auth. Setup
+// Firebase Authentication Documentaion: https://firebase.google.com/docs/reference/js/firebase.auth.GoogleAuthProvider
+// 1. const googleProvider = new firebase.auth.GoogleAuthProvider();
+//  - Setup & Export a Google Authentication "Provider" via Firebase (i.e. Twitter, Facebook, Google, etc...)
+//  
+// 2. Within 'app.js': We are going to run/setup a "Callback" => To check if "Firebase" actually log-in or the User log-out
+//   (We will be going back to refactor later => Just want to log if a successful login/logout functions works)
+//  - 1st: import { firebase } from './firebase/firebase';
+//  - 2nd: firebase.auth().onAuthStateChange(() => { })
+//       - Calling '.auth()' as a function => To get all of the "Authentication" related functionality/methods
+//       - Method '.onAuthStateChanged((user) => { })' : A Callback Function that runs when the "Authentication State" has Changed => (When a user goes from "Authenticated => Un-authenticated" OR "Un-authenticated => Authenticated")
+//                                                     - if (user) { console.log('log in); } else { console.log('log out'); }  
+//                                                     - If there is a "User" => The 'user' is provided as the "1st Parameter" of the "CallBack Function()"
+//                                                                     
+// 3. Within our "/src/actions/" Directory => Create an 'auth.js' file 
+//  - Step 1: const startLogin = () => { return () => { } }
+//          - Create our 'startLogin()' function => That returns a Function()
+//  - Step 2: () => { return firebase.auth().signInWithPopup(googleAuthProvider); }
+//          - firebase.auth().signInWithPopup(googleAuthProvider); => Allow user to login with a "Google Related Services" and display a lil "Pop-up System" => Where the user pick the account & login => & Then Authenticated
+//          - Within the "Returned Function()" => We are going to 'return' the "Promise Chain" => Allowing other to attach onto it
+// 
+// 4. Within "components/LoginPage.js": 
+//  - 1st: import { connect } from 'react-redux'; => (To use "Map Dispatch To Props" => Since we would want to "Dispatch" 'startLogin'
+//         import { startLogin } from '../actions/auth.js; 
+//
+//  - 2nd: const mapDispatchToProps = (dispatch) => ({ startLogin: () => dispatch(startLogin()) })
+//       - Setup 'mapDispatchToProps'
+//       - Passing in/Accessing (dispatch) =>
+//       - Returning: Our "Prop Object{}" => with 'startLogin' Property => as a Function() call "Dispatching" our 'startLogin()' function
+/**********************************************************************************************************************************************************************************/
 
 // child_removed event => Going to fire when one of our 'expenses' get deleted
 // database.ref('expenses').on('child_removed', (snapshot) => {
