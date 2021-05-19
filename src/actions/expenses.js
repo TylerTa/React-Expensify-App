@@ -26,12 +26,13 @@ export const addExpense = (expense) => ({
 });
 
 export const startAddExpense = (expenseData = {}) => {
-  return (dispatch) => {
+  return (dispatch, getState) => {
     /**
      * Destructuring 'expenseData{}' Syntax
      * 1. Destructuring 'expenseData{}' "Object Properties"
      * 2. Declaring them as 'const' Variables => While assigning/setting "Default Values" (If the Object did not have those Properties)
      */
+    const uid = getState().auth.uid;
     const {
       description = '',
       note = '',
@@ -44,17 +45,12 @@ export const startAddExpense = (expenseData = {}) => {
 
     // Adding/Pushing the 'expense{}' to the database
     // - Then: Dispatching 'addExpense()' Action Generator Function to change/add the 'expense' to the Redux Store
-    return database
-      .ref('expenses')
-      .push(expense)
-      .then((ref) => {
-        dispatch(
-          addExpense({
-            id: ref.key,
-            ...expense
-          })
-        );
-      });
+    return database.ref(`users/${uid}/expenses`).push(expense).then((ref) => {
+      dispatch(addExpense({
+        id: ref.key,
+        ...expense
+      }));
+    });
   };
 };
 
@@ -66,8 +62,9 @@ export const removeExpense = ({ id } = {}) => ({
 });
 
 export const startRemoveExpense = ({ id } = {}) => {
-  return (dispatch) => {
-    return database.ref(`expenses/${id}`).remove().then(() => {
+  return (dispatch, getState) => {
+    const uid = getState().auth.uid;
+    return database.ref(`users/${uid}/expenses/${id}`).remove().then(() => {
       dispatch(removeExpense({ id }));
     });
   };
@@ -81,8 +78,9 @@ export const editExpense = (id, updates) => ({
 });
 
 export const startEditExpense = (id, updates) => {
-  return (dispatch) => {
-    return database.ref(`expenses/${id}`).update(updates).then(() => {
+  return (dispatch, getState) => {
+    const uid = getState().auth.uid;
+    return database.ref(`users/${uid}/expenses/${id}/`).update(updates).then(() => {
       dispatch(editExpense(id, updates))
     });
   };
@@ -94,10 +92,12 @@ export const setExpenses = (expenses) => ({
   expenses
 });
 
-// Start (SET_EXPENSES) - Asynchronous Action Generator: 
+// Start (SET_EXPENSES) - Asynchronous Action: Supported with 'thunk' => Returning a Function that calls our 'setExpenses()' Action Generator
 export const startSetExpenses = () => {
-  return (dispatch) => {
-    return database.ref('expenses').once('value').then((snapshot) => {
+  return (dispatch, getState) => {
+    const uid = getState().auth.uid;
+
+    return database.ref(`users/${uid}/expenses`).once('value').then((snapshot) => {
       const fetchedExpensesData = [];
 
       snapshot.forEach((childSnapshot) => {
@@ -111,6 +111,16 @@ export const startSetExpenses = () => {
     });
   };
 };
+
+/*****************************************************************************************************************************************************************************************************************************************/
+// Ep.168: Private Firebast Data (For Each Users)
+// 1. Refactor startAddExpense(): To return add/save expenses data based on/related to the "User ID" over in Firebase
+//
+// NOTE: When we're using our 'thunk' Async Actions (Ex. 'startAddExpense': Returning a function that "Dispatch" our actual Action Generator Function)
+//     - It gets called with 'dispatch' as its 1st Argument
+//     - It also get called with 'getState' as its 2nd Argument => Using our 'getState()' => to get the current "State" & Access/grab our User ID 
+//       (Ex. const uid = getState().auth.uid; )
+/*****************************************************************************************************************************************************************************************************************************************/
 
 /******************************************************************************************************************************************************************************************************************************************
  * Ep.152: Asynchronus Action Redux

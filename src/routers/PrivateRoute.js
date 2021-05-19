@@ -28,29 +28,50 @@
 //                                                - We can get all of the (props) povided by default from <Route /> from the Arrow Function Parameter
 //                  - Conditional Logic: If 'isAuthenticated' is set/true => We will "Return"/Passing <Component {...props} /> => As the provided <Component /> to <Route />
 //                                       Else => We will use a <Redirect to="/" /> Component provided by 'react-router-dom' => To redirect the user to the "/" root/home page
- /******************************************************************************************************************************************************/
+//
+// Recap:
+// 1. Setup <PrivateRoute /> : Which is really just a "wrapper" around <Route />
+//  - The whole using/doing thing like this => Is to add some "Conditional Logic" in
+//    Allowing us to determining if the "User" is "Login" or not => To either Render the "Private Pages" or "Redirecting" the User over to a "Public Page"
+//
+/******************************************************************************************************************************************************/
 
 import React from 'react';
 import { connect } from 'react-redux'; // Use the "Redux Store" => 'state.auth.uid' => To determin wheter or not the use is authenticated
 import { Route, Redirect } from 'react-router-dom'; // 
 import Header from '../components/Header';
 
-
-export const PrivateRoute = ({ isAuthenticated, component: Component, ...rest}) => (
-  <Route {...rest} component={(props) => (
-    isAuthenticated ? (
-      <div>
-        <Header />
-        <Component {...props} />
-      </div>
-    ) : (
-      <Redirect to="/" />
-    )
-  )} />
+// Way more simpler & cleaner code!!!
+export const PrivateRoute = (props) => (
+  props.isAuthenticated ? 
+    <div>
+      <Header />
+      <Route {...props}/>
+    </div>
+  : <Redirect to="/" />
 );
+
+// Courses Example: Confusing the way it was passing down passing down "props" to the returned <Route /> Components
+// export const PrivateRoute = ({ isAuthenticated, component: Component, ...rest}) => (
+//   <Route {...rest} component={(props) => (
+//     isAuthenticated ? (
+//       <div>
+//         <Header />
+//         <Component {...props} />
+//       </div>
+//     ) : (
+//       <Redirect to="/" />
+//     )
+//   )} />
+// );
 
 const mapStateToProps = (state) => ({
   isAuthenticated: !!state.auth.uid
 });
 
 export default connect(mapStateToProps)(PrivateRoute);
+
+// 1. Create PublicRoute (copy & refactor PrivateRoute)
+// 2. Redirect to /dashboard if logged in
+// 3. Render component if NOT logged in
+// 4. Use it for the LoginPage
