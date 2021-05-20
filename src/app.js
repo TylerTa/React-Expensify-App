@@ -3,6 +3,9 @@ import ReactDOM from 'react-dom';
 import  { Provider } from 'react-redux'
 import AppRouter, { history } from './routers/AppRouter';
 
+// Components Imports
+import LoadingPage from './components/LoadingPage';
+
 // Create Store Imports
 import configureStore from './store/configureStore';
 
@@ -43,7 +46,7 @@ const renderApp = () => {
 };
 
 // Render a "Loading Message" until => We get data from Firebase
-ReactDOM.render(<p>Loading...</p>, document.getElementById('app'));
+ReactDOM.render(<LoadingPage />, document.getElementById('app'));
 
 firebase.auth().onAuthStateChanged((user) => {
   if (user) {  

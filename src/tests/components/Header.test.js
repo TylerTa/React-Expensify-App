@@ -10,8 +10,8 @@ import { Header } from '../../components/Header';
 // });
 
 test('should render Header correctly', () => {
-    const wrapper = shallow(<Header startLogout={() => {}} />);
-    expect(wrapper).toMatchSnapshot();
+  const wrapper = shallow(<Header startLogout={() => {}} />);
+  expect(wrapper).toMatchSnapshot();
 });
 
 // Test Case: Making sure the correct "Props" gets called when we click the [Logout] button 
